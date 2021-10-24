@@ -44,6 +44,12 @@ func init() {
 
 func main() {
 	log.Println("dir in main:", dir)
+
+    files, err = FilePathWalkDir(dir)
+    if err != nil {
+        log.Println("cannot walk file path:", err)
+    }
+
 	r := mux.NewRouter()
 	r.HandleFunc("/", index)
 	r.HandleFunc("/make", makeHist)
@@ -263,4 +269,15 @@ func untargz(name string, r io.Reader) ([]byte, error) {
 		}
 		return buf.Bytes(), nil
 	}
+}
+
+func FilePathWalkDir(root string) ([]string, error) {
+    var files []string
+    err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+        if !info.IsDir() {
+            files = append(files, path)
+        }
+        return nil
+    })
+    return files, err
 }
