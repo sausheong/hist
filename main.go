@@ -43,6 +43,7 @@ func init() {
 }
 
 func main() {
+	log.Println("dir in main:", dir)
 	r := mux.NewRouter()
 	r.HandleFunc("/", index)
 	r.HandleFunc("/make", makeHist)
