@@ -45,10 +45,14 @@ func init() {
 func main() {
 	log.Println("dir in main:", dir)
 
-    files, err = FilePathWalkDir(dir)
+    files, err := FilePathWalkDir(dir)
     if err != nil {
         log.Println("cannot walk file path:", err)
     }
+
+    for _, file := range files {
+        fmt.Println(file)
+    }	
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", index)
