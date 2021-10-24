@@ -33,29 +33,19 @@ func init() {
 	dir, err = filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		log.Println("Cannot get app file dir:", err)
-	}	
-	if dir == "/app/bin" {
+	}
+	// for Heroku
+	if dir == "/app/bin" { // Heroku runs in app/bin directory
 		dir = "/app"
 	}
-	port = os.Getenv("PORT")
+	port = os.Getenv("PORT") // Heroku will run in whichever port they want
 	if port == "" {
-		port = "8000"
+		port = "8000" // localhost runs on 8000
 	}
 	initFonts()
 }
 
 func main() {
-	log.Println("dir in main:", dir)
-
-    files, err := FilePathWalkDir("/app")
-    if err != nil {
-        log.Println("cannot walk file path:", err)
-    }
-
-    for _, file := range files {
-        fmt.Println(file)
-    }	
-
 	r := mux.NewRouter()
 	r.HandleFunc("/", index)
 	r.HandleFunc("/make", makeHist)
@@ -275,15 +265,4 @@ func untargz(name string, r io.Reader) ([]byte, error) {
 		}
 		return buf.Bytes(), nil
 	}
-}
-
-func FilePathWalkDir(root string) ([]string, error) {
-    var files []string
-    err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-        if !info.IsDir() {
-            files = append(files, path)
-        }
-        return nil
-    })
-    return files, err
 }
