@@ -31,9 +31,8 @@ var port string
 func init() {
 	var err error
 	dir, err = filepath.Abs(filepath.Dir(os.Args[0]))
-	log.Println("dir:", dir)
-	if err != nil {
-		log.Fatal(err)
+	if dir == "/app/bin" {
+		dir == "/app"
 	}
 	port = os.Getenv("PORT")
 	if port == "" {
