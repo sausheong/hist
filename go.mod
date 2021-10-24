@@ -1,5 +1,6 @@
 module github.com/sausheong/hist
 
+// +heroku goVersion go1.11
 go 1.17
 
 require (
