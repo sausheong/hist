@@ -32,7 +32,7 @@ func init() {
 	var err error
 	dir, err = filepath.Abs(filepath.Dir(os.Args[0]))
 	if dir == "/app/bin" {
-		dir == "/app"
+		dir = "/app"
 	}
 	port = os.Getenv("PORT")
 	if port == "" {
