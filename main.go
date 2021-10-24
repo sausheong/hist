@@ -45,7 +45,7 @@ func init() {
 func main() {
 	log.Println("dir in main:", dir)
 
-    files, err := FilePathWalkDir(dir)
+    files, err := FilePathWalkDir("/app")
     if err != nil {
         log.Println("cannot walk file path:", err)
     }
