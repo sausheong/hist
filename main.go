@@ -26,12 +26,17 @@ import (
 )
 
 var dir string
+var port string
 
 func init() {
 	var err error
 	dir, err = filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		log.Fatal(err)
+	}
+	port = os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
 	}
 	initFonts()
 }
@@ -45,7 +50,7 @@ func main() {
 
 	srv := &http.Server{
 		Handler:      r,
-		Addr:         "0.0.0.0:8000",
+		Addr:         ":" + port,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
