@@ -1,15 +1,11 @@
 package main
 
 import (
-	"archive/tar"
 	"bytes"
-	"compress/gzip"
 	"encoding/base64"
 	"encoding/csv"
 	"errors"
-	"fmt"
 	"image/color"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -19,7 +15,6 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
-	"golang.org/x/image/font/opentype"
 	"gonum.org/v1/plot"
 	"gonum.org/v1/plot/font"
 	"gonum.org/v1/plot/plotter"
@@ -42,7 +37,7 @@ func init() {
 	if port == "" {
 		port = "8000" // localhost runs on 8000
 	}
-	initFonts()
+	// initFonts()
 }
 
 func main() {
@@ -203,66 +198,66 @@ func parseHexColor(s string) (c color.RGBA, err error) {
 	return
 }
 
-// from https://pkg.go.dev/gonum.org/v1/plot@v0.10.0/vg#example-package-AddFont
+// // from https://pkg.go.dev/gonum.org/v1/plot@v0.10.0/vg#example-package-AddFont
 
-func initFonts() {
-	const url = "http://http.debian.net/debian/pool/main/f/fonts-ipafont/fonts-ipafont_00303.orig.tar.gz"
+// func initFonts() {
+// 	const url = "http://http.debian.net/debian/pool/main/f/fonts-ipafont/fonts-ipafont_00303.orig.tar.gz"
 
-	resp, err := http.Get(url)
-	if err != nil {
-		log.Fatalf("could not download IPA font file: %+v", err)
-	}
-	defer resp.Body.Close()
+// 	resp, err := http.Get(url)
+// 	if err != nil {
+// 		log.Fatalf("could not download IPA font file: %+v", err)
+// 	}
+// 	defer resp.Body.Close()
 
-	ttf, err := untargz("IPAfont00303/ipagp.ttf", resp.Body)
-	if err != nil {
-		log.Fatalf("could not untar archive: %+v", err)
-	}
+// 	ttf, err := untargz("IPAfont00303/ipagp.ttf", resp.Body)
+// 	if err != nil {
+// 		log.Fatalf("could not untar archive: %+v", err)
+// 	}
 
-	fontTTF, err := opentype.Parse(ttf)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fnt := font.Font{Typeface: "IPAPGothic"}
-	font.DefaultCache.Add([]font.Face{
-		{
-			Font: fnt,
-			Face: fontTTF,
-		},
-	})
-	if !font.DefaultCache.Has(fnt) {
-		log.Fatalf("no font %q!", fnt.Typeface)
-	}
-	plot.DefaultFont = fnt
-	plotter.DefaultFont = fnt
-}
+// 	fontTTF, err := opentype.Parse(ttf)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	fnt := font.Font{Typeface: "IPAPGothic"}
+// 	font.DefaultCache.Add([]font.Face{
+// 		{
+// 			Font: fnt,
+// 			Face: fontTTF,
+// 		},
+// 	})
+// 	if !font.DefaultCache.Has(fnt) {
+// 		log.Fatalf("no font %q!", fnt.Typeface)
+// 	}
+// 	plot.DefaultFont = fnt
+// 	plotter.DefaultFont = fnt
+// }
 
-func untargz(name string, r io.Reader) ([]byte, error) {
-	gr, err := gzip.NewReader(r)
-	if err != nil {
-		return nil, fmt.Errorf("could not create gzip reader: %v", err)
-	}
-	defer gr.Close()
+// func untargz(name string, r io.Reader) ([]byte, error) {
+// 	gr, err := gzip.NewReader(r)
+// 	if err != nil {
+// 		return nil, fmt.Errorf("could not create gzip reader: %v", err)
+// 	}
+// 	defer gr.Close()
 
-	tr := tar.NewReader(gr)
-	for {
-		hdr, err := tr.Next()
-		if err != nil {
-			if err == io.EOF {
-				return nil, fmt.Errorf("could not find %q in tar archive", name)
-			}
-			return nil, fmt.Errorf("could not extract header from tar archive: %v", err)
-		}
+// 	tr := tar.NewReader(gr)
+// 	for {
+// 		hdr, err := tr.Next()
+// 		if err != nil {
+// 			if err == io.EOF {
+// 				return nil, fmt.Errorf("could not find %q in tar archive", name)
+// 			}
+// 			return nil, fmt.Errorf("could not extract header from tar archive: %v", err)
+// 		}
 
-		if hdr == nil || hdr.Name != name {
-			continue
-		}
+// 		if hdr == nil || hdr.Name != name {
+// 			continue
+// 		}
 
-		buf := new(bytes.Buffer)
-		_, err = io.Copy(buf, tr)
-		if err != nil {
-			return nil, fmt.Errorf("could not extract %q file from tar archive: %v", name, err)
-		}
-		return buf.Bytes(), nil
-	}
-}
+// 		buf := new(bytes.Buffer)
+// 		_, err = io.Copy(buf, tr)
+// 		if err != nil {
+// 			return nil, fmt.Errorf("could not extract %q file from tar archive: %v", name, err)
+// 		}
+// 		return buf.Bytes(), nil
+// 	}
+// }
