@@ -16,99 +16,110 @@
             
             <div class="col s11 flow-text">
                 Upload your data in a CSV file and I'll make a histogram for you.
-                <a href="#info">Learn more</a>
             </div>
             
-            <div class="row">
-                <form class="col s12" name="make" action="/make" id="make" method="post" enctype="multipart/form-data">
-                    <div class="row"">
-                        <div class="file-field input-field col s12">
-                            <input type="file" name="csv" id="csv">
-                            <div class="file-path-wrapper">
-                                <input class="file-path validate" type="text" placeholder="Click here upload a CSV file">
+            <div class="row" style="margin-top: 20px; padding-top: 10px;">
+                <div class="col s6">
+                    <form name="make" action="/make" id="make" method="post" enctype="multipart/form-data">
+                        <div class="row"">
+                            <div class="file-field input-field">
+                                <input type="file" name="csv" id="csv">
+                                <div class="file-path-wrapper">
+                                    <input class="file-path validate" type="text" placeholder="Click here upload a CSV file">
 
-                            </div>
-                        </div>                            
-                        <div class="input-field col s6">
-                            <input placeholder="Title of the histogram" name="title" id="title" type="text" class="validate">
+                                </div>
+                            </div>                            
+                            <div class="input-field">
+                                <input placeholder="Title of the histogram" name="title" id="title" type="text" class="validate">
+                            </div>                    
+                            <div class="input-field">
+                                <input placeholder="Number of bins, default is 25" name="bins" id="bins" type="text" class="validate">
+                            </div>  
+                            <div class="input-field">
+                                <input placeholder="Color, default is #FF7F50 (Coral)" name="color" id="color" type="text" class="validate">
+                                <label for="color"><a href="https://htmlcolorcodes.com" target="_blank">Try a color here</a></label>
+                            </div>                        
+                            <div class="input-field">
+                                <input placeholder="Width, default is 400" name="width" id="width" type="text" class="validate">
+                            </div>  
+                            <div class="input-field">
+                                <input placeholder="Height, default is 200" name="height" id="height" type="text" class="validate">
+                            </div>                                                                          
                         </div>                    
-                        <div class="input-field col s6">
-                            <input placeholder="Number of bins, default is 25" name="bins" id="bins" type="text" class="validate">
-                        </div>  
-                        <div class="input-field col s4">
-                            <input placeholder="Color, default is #FF7F50 (Coral)" name="color" id="color" type="text" class="validate">
-                            <label for="color"><a href="https://htmlcolorcodes.com" target="_blank">Try a color here</a></label>
-                        </div>                        
-                        <div class="input-field col s4">
-                            <input placeholder="Width, default is 400" name="width" id="width" type="text" class="validate">
-                        </div>  
-                        <div class="input-field col s4">
-                            <input placeholder="Height, default is 200" name="height" id="height" type="text" class="validate">
-                        </div>                                                                          
-                    </div>                    
-                    <div class="row col s12">
-                        <input class="btn light-blue darken-1" name="submit" id="submit" type="submit" value="Make histogram"/>
-                        <input class="btn pink accent-2" type="reset" value="Reset"/>
-                    </div>
-                </form>
+                        <div class="row">
+                            <input class="btn light-blue darken-1" name="submit" id="submit" type="submit" value="Make histogram"/>
+                            <input class="btn pink accent-2" type="reset" value="Reset"/>
+                        </div>
+                    </form>
+
+                </div>                
+            
+                <div class="col s5 offset-s1">
+                    <ul class="collapsible">
+                        <li>
+                          <div class="collapsible-header"><i class="material-icons">info</i>About this</div>
+                          <div class="collapsible-body">
+                                This is a simple web app that does only 1 thing -- create a histogram. 
+            
+                                Data uploaded is only used to generate the chart and is not saved. The chart itself is a 
+                                <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs" target="_blank">data-url image</a>, 
+                                there is no image generated at the backend. You can right-click and save the image for further use.
+                          </div>
+                        </li>
+                        <li>
+                          <div class="collapsible-header"><i class="material-icons">equalizer</i>Data</div>
+                          <div class="collapsible-body">
+                                Upload a CSV file with data and I will create a histogram from it. The CSV file must only have 
+                                1 column of data (other columns are ignored). 
+            
+                                <a target="_blank" href="/static/norm.csv">This is an example of a CSV that works.</a> 
+                                It is a CSV file with 10,000 data points and will end up with a normal distribution when I 
+                                make a histogram from the data. Download it and try it out yourself.
+                          </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header"><i class="material-icons">grid_view</i>Bins</div>
+                            <div class="collapsible-body">
+                                    You can choose how many bins the histogram should have. By default there are 25 bins. Adjust 
+                                    accordingly if you need more or less bins.
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header"><i class="material-icons">color_lens</i>Color</div>
+                            <div class="collapsible-body">
+                                    You can choose the color of the bars. Use a color hex to represent, for example the default color
+                                    is Coral, which is <code>#FF7F50</code>. You can check out some other cool colors here at
+                                    <a href="https://htmlcolorcodes.com" target="_blank">https://htmlcolorcodes.com</a>.
+                            </div>
+                        </li>
+                        <li>
+                            <div class="collapsible-header"><i class="material-icons">straighten</i>Width and height</div>
+                            <div class="collapsible-body">
+                                    You can set the width and height of the whole histogram. By default it is 400px wide and 200px high.
+                                    Enter only numbers.
+                            </div>
+                        </li>   
+                        <li>
+                            <div class="collapsible-header"><i class="material-icons">code</i>Source code and hosting</div>
+                            <div class="collapsible-body">
+                                    The source code for this web app can be found at <a target="_blank" href="https://github.com/sausheong/hist">https://github.com/sausheong/hist</a>.
+                                    The web app is deployed at Heroku under a free tier app.
+                            </div>
+                        </li>                                                
+                    </ul>
+                </div>            
             </div>
-      
+
             <div class="row center hide" id="hist-container" style="padding-top: 2em; padding-bottom: 2em;">
                 <img id="hist" class="responsive-img" src="" alt="hist"/>                
-            </div>   
-
-
-            
-            <div class="row" id="info">
-                <h4>About this</h4>
-                <p class="flow-text">
-                    This is a simple web app that does only 1 thing -- create a histogram. 
-
-                    Data uploaded is only used to generate the chart and is not saved. The chart itself is a 
-                    <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/Data_URIs" target="_blank">data-url image</a>, 
-                    there is no image generated at the backend. You can right-click and save the image for further use.
-                </p>
-
-                <h5 class="blue-text text-darken-3">Histogram data</h5>
-                <p class="flow-text">
-                    Upload a CSV file with data and I will create a histogram from it. The CSV file must only have 
-                    1 column of data (other columns are ignored). 
-
-                    <a target="_blank" href="/static/norm.csv">This is an example of a CSV that works.</a> 
-                    It is a CSV file with 10,000 data points and will end up with a normal distribution when I 
-                    make a histogram from the data. Download it and try it out yourself.
-                </p>
-
-                <h5 class="blue-text text-darken-3">Bins</h5>
-                <p class="flow-text">
-                    You can choose how many bins the histogram should have. By default there are 25 bins. Adjust 
-                    accordingly if you need more or less bins.
-                </p>
-
-                <h5 class="blue-text text-darken-3">Color</h5>
-                <p class="flow-text">
-                    You can choose the color of the bars. Use a color hex to represent, for example the default color
-                    is Coral, which is <code>#FF7F50</code>. You can check out some other cool colors here at
-                    <a href="https://htmlcolorcodes.com" target="_blank">https://htmlcolorcodes.com</a>.
-                </p>          
-                
-                <h5 class="blue-text text-darken-3">Width and height</h5>
-                <p class="flow-text">
-                    You can set the width and height of the whole histogram. By default it is 400px wide and 200px high.
-                    Enter only numbers.
-                </p>
-                
-                <h4>Source code and hosting</h4>
-                <p class="flow-text">
-                    The source code for this web app can be found at <a target="_blank" href="https://github.com/sausheong/hist">https://github.com/sausheong/hist</a>.
-                    The web app is deployed at Heroku under a free tier app.
-                </p>                
-            </div>
+            </div>               
         </div>        
+
         <script src="/static/js/jquery-3.5.1.min.js"></script>
         <script src="/static/js/materialize.min.js"></script>
         <script>
             $(document).ready(function(){
+                $('.collapsible').collapsible();
                 $('select').formSelect();
                 $('#make').submit(function(e) {
                     e.preventDefault();    
