@@ -29,6 +29,9 @@ func init() {
 	if err != nil {
 		log.Println("Cannot get app file dir:", err)
 	}
+
+	log.Println("dir:", dir)
+
 	// for Heroku
 	if dir == "/app/bin" { // Heroku runs in app/bin directory
 		dir = "/app"
