@@ -24,25 +24,21 @@ var dir string
 var port string
 
 func init() {
+	// get the app directory
+	// for Heroku this is /app
+	// for Digital Ocean App Platform this is /workspace
 	var err error
-	dir, err = filepath.Abs(filepath.Dir(os.Args[0]))
-	if err != nil {
-		log.Println("Cannot get app file dir:", err)
+	dir = os.Getenv("APPDIR")
+	if dir == "" {
+		// if not set, use the path where the app is run
+		dir, err = filepath.Abs(filepath.Dir(os.Args[0]))
+		if err != nil {
+			log.Println("Cannot get app file dir:", err)
+		}
 	}
 
-	log.Println("dir:", dir)
-
-	// for Heroku
-	if dir == "/app/bin" { // Heroku runs in app/bin directory
-		dir = "/app"
-	}
-
-	// for DigitalOcean
-	if dir == "/workspace/bin" { // Heroku runs in app/bin directory
-		dir = "/workspace"
-	}
-
-	port = os.Getenv("PORT") // Heroku will run in whichever port they want
+	// get the port to run the web server
+	port = os.Getenv("PORT")
 	if port == "" {
 		port = "8000" // localhost runs on 8000
 	}
@@ -66,13 +62,13 @@ func main() {
 	log.Fatal(srv.ListenAndServe())
 }
 
-// front page
+// front page handle
 func index(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseFiles(dir + "/static/index.html")
 	t.Execute(w, nil)
 }
 
-// making the histogram
+// histogram-making handler
 func makeHist(w http.ResponseWriter, r *http.Request) {
 	r.ParseMultipartForm(8192)
 	var title string
@@ -110,6 +106,7 @@ func makeHist(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(data))
 }
 
+// make a histogram
 func hist(r *http.Request, title string, nbins, width, height int, clr color.Color) (buf bytes.Buffer) {
 	file, _, err := r.FormFile("csv")
 	if err == nil {
@@ -161,6 +158,7 @@ func hist(r *http.Request, title string, nbins, width, height int, clr color.Col
 	return
 }
 
+// use value if it's not 0, else use def
 func assignIf(value, def int) int {
 	if value == 0 {
 		return def
@@ -168,8 +166,8 @@ func assignIf(value, def int) int {
 	return value
 }
 
+// parse the hex color into color.RGBA
 // adapted from https://stackoverflow.com/questions/54197913/parse-hex-string-to-image-color
-
 var errInvalidFormat = errors.New("invalid format")
 
 func parseHexColor(s string) (c color.RGBA, err error) {
@@ -206,67 +204,3 @@ func parseHexColor(s string) (c color.RGBA, err error) {
 	}
 	return
 }
-
-// // from https://pkg.go.dev/gonum.org/v1/plot@v0.10.0/vg#example-package-AddFont
-
-// func initFonts() {
-// 	const url = "http://http.debian.net/debian/pool/main/f/fonts-ipafont/fonts-ipafont_00303.orig.tar.gz"
-
-// 	resp, err := http.Get(url)
-// 	if err != nil {
-// 		log.Fatalf("could not download IPA font file: %+v", err)
-// 	}
-// 	defer resp.Body.Close()
-
-// 	ttf, err := untargz("IPAfont00303/ipagp.ttf", resp.Body)
-// 	if err != nil {
-// 		log.Fatalf("could not untar archive: %+v", err)
-// 	}
-
-// 	fontTTF, err := opentype.Parse(ttf)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	fnt := font.Font{Typeface: "IPAPGothic"}
-// 	font.DefaultCache.Add([]font.Face{
-// 		{
-// 			Font: fnt,
-// 			Face: fontTTF,
-// 		},
-// 	})
-// 	if !font.DefaultCache.Has(fnt) {
-// 		log.Fatalf("no font %q!", fnt.Typeface)
-// 	}
-// 	plot.DefaultFont = fnt
-// 	plotter.DefaultFont = fnt
-// }
-
-// func untargz(name string, r io.Reader) ([]byte, error) {
-// 	gr, err := gzip.NewReader(r)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("could not create gzip reader: %v", err)
-// 	}
-// 	defer gr.Close()
-
-// 	tr := tar.NewReader(gr)
-// 	for {
-// 		hdr, err := tr.Next()
-// 		if err != nil {
-// 			if err == io.EOF {
-// 				return nil, fmt.Errorf("could not find %q in tar archive", name)
-// 			}
-// 			return nil, fmt.Errorf("could not extract header from tar archive: %v", err)
-// 		}
-
-// 		if hdr == nil || hdr.Name != name {
-// 			continue
-// 		}
-
-// 		buf := new(bytes.Buffer)
-// 		_, err = io.Copy(buf, tr)
-// 		if err != nil {
-// 			return nil, fmt.Errorf("could not extract %q file from tar archive: %v", name, err)
-// 		}
-// 		return buf.Bytes(), nil
-// 	}
-// }
