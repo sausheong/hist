@@ -36,6 +36,12 @@ func init() {
 	if dir == "/app/bin" { // Heroku runs in app/bin directory
 		dir = "/app"
 	}
+
+	// for DigitalOcean
+	if dir == "/workspace/bin" { // Heroku runs in app/bin directory
+		dir = "/workspace"
+	}
+
 	port = os.Getenv("PORT") // Heroku will run in whichever port they want
 	if port == "" {
 		port = "8000" // localhost runs on 8000
