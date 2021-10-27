@@ -49,9 +49,7 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", index)
 	r.HandleFunc("/make", makeHist)
-
 	r.PathPrefix("/static").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(dir+"/static"))))
-
 	srv := &http.Server{
 		Handler:      r,
 		Addr:         ":" + port,
@@ -110,28 +108,25 @@ func makeHist(w http.ResponseWriter, r *http.Request) {
 func hist(r *http.Request, title string, nbins, width, height int, clr color.Color) (buf bytes.Buffer) {
 	file, _, err := r.FormFile("csv")
 	if err == nil {
+		// read from CSV file uploaded
 		reader := csv.NewReader(file)
 		rows, err := reader.ReadAll()
 		if err != nil {
 			log.Println("Cannot read CSV file:", err)
 		}
+
+		// extract CSV data for use by plotter
 		length := len(rows)
-		data := make([]float64, length)
+		data := make(plotter.Values, length)
 		for i := 0; i < length; i++ {
 			data[i], _ = strconv.ParseFloat(rows[i][0], 64)
-		}
-
-		n := len(data)
-		vals := make(plotter.Values, n)
-		for i := 0; i < n; i++ {
-			vals[i] = data[i]
 		}
 
 		// start creating the histogram
 		plt := plot.New()
 		plt.Title.Text = title
 		plt.Title.Padding = 25
-		hist, err := plotter.NewHist(vals, nbins)
+		hist, err := plotter.NewHist(data, nbins)
 		if err != nil {
 			log.Println("Cannot plot:", err)
 		}
@@ -139,22 +134,18 @@ func hist(r *http.Request, title string, nbins, width, height int, clr color.Col
 		plt.Add(hist)
 
 		// write to Writer
-		w, _ := font.ParseLength(strconv.Itoa(width))
-		h, _ := font.ParseLength(strconv.Itoa(height))
-		writerto, err := plt.WriterTo(w, h, "png")
+		writerto, err := plt.WriterTo(font.Length(width), font.Length(height), "png")
 		if err != nil {
 			log.Println("Cannot get WriterTo:", err)
 		}
-
+		// write out to an image buffer
 		writerto.WriteTo(&buf)
 		if err != nil {
 			log.Println("Cannot write to image:", err)
 		}
-
 	} else {
 		log.Println("Cannot parse CSV file:", err)
 	}
-
 	return
 }
 
